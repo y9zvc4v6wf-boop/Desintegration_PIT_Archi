@@ -1,133 +1,33 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <title>Désintégration PIT Archi</title>
-  <style>
-    :root{--blue:#0b5cab;--blue2:#eaf3fb;--green:#18864b;--red:#c43d3d;--orange:#c77700;--line:#d9e1ea;--bg:#f5f7fa}
-    *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#142033}
-    header{background:linear-gradient(135deg,#063b70,#0b6dbf);color:white;padding:24px 18px}.wrap{max-width:1180px;margin:auto}.subtitle{opacity:.88;margin:6px 0 0}
-    main{padding:18px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 3px 12px #19324d10}
-    .controls{display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:10px;align-items:end}label{font-size:.86rem;font-weight:700;color:#344054;display:block;margin-bottom:6px}
-    input,select,button{width:100%;min-height:42px;border-radius:9px;border:1px solid #bfcbd8;padding:9px 11px;font:inherit}button{border:0;background:var(--blue);color:white;font-weight:700;cursor:pointer}button:hover{filter:brightness(.94)}button.secondary{background:#e7edf4;color:#1f3650}
-    .notice{font-size:.88rem;color:#475467;margin-top:10px}.status{padding:8px 11px;border-radius:8px;margin-top:10px;display:none}.status.ok{display:block;background:#e9f8ef;color:#146b3b}.status.err{display:block;background:#fdecec;color:#9d2525}
-    .monthbar{display:flex;align-items:center;justify-content:space-between;gap:12px}.monthbar button{width:auto}.monthbar h2{margin:0;font-size:1.3rem}
-    .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.84rem;color:#475467;margin:12px 0}.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}.g{background:var(--green)}.o{background:var(--orange)}.r{background:var(--red)}
-    .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.dow{text-align:center;font-weight:700;color:#667085;padding:7px}.day{min-height:138px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;overflow:hidden}.day.out{opacity:.42;background:#f4f6f8}.day.past{background:#f2f3f5}.date{font-weight:800;margin-bottom:6px}.entries{display:flex;flex-direction:column;gap:4px}.entry{font-size:.76rem;padding:5px 6px;border-radius:6px;background:#eef3f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry.available{border-left:4px solid var(--green)}.entry.maybe{border-left:4px solid var(--orange)}.entry.unavailable{border-left:4px solid var(--red)}.entry.mine{cursor:pointer;outline:1px dashed #0b5cab}.entry.mine:hover{background:#dcecff}
-    .day button{margin-top:7px;min-height:30px;padding:5px;font-size:.78rem}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.kpi{border-radius:10px;padding:13px;background:var(--blue2)}.kpi strong{font-size:1.5rem;display:block}
-    dialog{border:0;border-radius:14px;padding:0;max-width:500px;width:calc(100% - 28px);box-shadow:0 18px 55px #0004}dialog::backdrop{background:#07192f99}.modal{padding:20px}.modal h3{margin-top:0}.modal-actions{display:flex;gap:8px;margin-top:14px}.modal-actions button{flex:1}
-    .records{width:100%;border-collapse:collapse;font-size:.9rem}.records th,.records td{padding:9px;border-bottom:1px solid var(--line);text-align:left}.records th{background:#f7f9fb}.danger{background:#b42318}.edit{background:#0b5cab}
-    @media(max-width:800px){.controls{grid-template-columns:1fr 1fr}.calendar{grid-template-columns:repeat(2,1fr)}.dow{display:none}.summary{grid-template-columns:1fr}.day{min-height:115px}}
-    @media(max-width:480px){.controls,.calendar{grid-template-columns:1fr}}
-  </style>
-</head>
-<body>
-<header><div class="wrap"><h1>Désintégration PIT Archi</h1><p class="subtitle">Suivi collaboratif des disponibilités jusqu'au 31 décembre 2026.</p></div></header>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Désintégration PIT Archi</title>
+<style>
+:root{--blue:#0b5cab;--green:#18864b;--red:#c43d3d;--line:#d9e1ea;--bg:#f5f7fa}*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#142033}header{background:linear-gradient(135deg,#063b70,#0b6dbf);color:#fff;padding:24px 18px}.wrap{max-width:1180px;margin:auto}.subtitle{opacity:.9;margin:6px 0 0}main{padding:18px}.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 3px 12px #19324d10}.controls{display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:10px;align-items:end}label{font-size:.86rem;font-weight:700;color:#344054;display:block;margin-bottom:6px}input,select,button{width:100%;min-height:42px;border-radius:9px;border:1px solid #bfcbd8;padding:9px 11px;font:inherit}button{border:0;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}button.secondary{background:#e7edf4;color:#1f3650}.danger{background:#b42318}.status{padding:8px 11px;border-radius:8px;margin-top:10px;display:none}.status.ok{display:block;background:#e9f8ef;color:#146b3b}.status.err{display:block;background:#fdecec;color:#9d2525}.notice{font-size:.88rem;color:#475467}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.kpi{border-radius:10px;padding:13px;background:#eaf3fb}.kpi strong{font-size:1.5rem;display:block}.monthbar{display:flex;align-items:center;justify-content:space-between;gap:12px}.monthbar button{width:auto}.monthbar h2{margin:0;font-size:1.3rem}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-top:12px}.dow{text-align:center;font-weight:700;color:#667085;padding:7px}.day{min-height:145px;border:1px solid var(--line);border-radius:10px;padding:8px;background:#fff}.day.out{opacity:.4}.day.closed{background:#f2f3f5}.date{font-weight:800}.count{font-size:.78rem;color:var(--green);margin:5px 0}.entry{font-size:.76rem;padding:5px 6px;margin-top:4px;border-radius:6px;background:#fdecec;border-left:4px solid var(--red);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry.mine{cursor:pointer;outline:1px dashed var(--blue)}.day button{margin-top:7px;min-height:30px;padding:5px;font-size:.78rem}.records{width:100%;border-collapse:collapse;font-size:.9rem}.records th,.records td{padding:9px;border-bottom:1px solid var(--line);text-align:left}.records th{background:#f7f9fb}dialog{border:0;border-radius:14px;padding:0;max-width:500px;width:calc(100% - 28px);box-shadow:0 18px 55px #0004}dialog::backdrop{background:#07192f99}.modal{padding:20px}.actions{display:flex;gap:8px;margin-top:14px}.actions button{flex:1}@media(max-width:800px){.controls{grid-template-columns:1fr 1fr}.calendar{grid-template-columns:repeat(2,1fr)}.dow{display:none}.summary{grid-template-columns:1fr}}@media(max-width:480px){.controls,.calendar{grid-template-columns:1fr}}
+</style></head>
+<body><header><div class="wrap"><h1>Désintégration PIT Archi</h1><p class="subtitle">Créez votre profil puis indiquez uniquement vos indisponibilités. Toutes les autres dates sont considérées disponibles.</p></div></header>
 <main class="wrap">
-  <section class="panel">
-    <div class="controls">
-      <div><label for="name">Votre nom *</label><input id="name" maxlength="80" placeholder="Prénom Nom" autocomplete="name"></div>
-      <div><label for="team">Équipe / groupe</label><input id="team" maxlength="80" placeholder="Optionnel"></div>
-      <div><label for="filterPerson">Filtrer par personne</label><select id="filterPerson"><option value="">Toutes les personnes</option></select></div>
-      <button id="saveProfile">Enregistrer mon profil</button>
-    </div>
-    <div id="connection" class="status"></div>
-    <p class="notice">Une seule réponse est conservée par utilisateur et par date. Cliquez sur votre réponse pour la modifier.</p>
-  </section>
-  <section class="panel summary">
-    <div class="kpi"><strong id="kpiPeople">0</strong> personnes visibles</div>
-    <div class="kpi"><strong id="kpiAvailable">0</strong> disponibilités</div>
-    <div class="kpi"><strong id="kpiRecords">0</strong> réponses au total</div>
-  </section>
-  <section class="panel">
-    <h2>Meilleures dates de disponibilité</h2>
-    <p class="notice">Classement calculé avec 1 point pour « Disponible », 0,5 point pour « À confirmer » et 0 point pour « Indisponible ».</p>
-    <div style="overflow:auto"><table class="records"><thead><tr><th>Rang</th><th>Date</th><th>Disponibles</th><th>À confirmer</th><th>Indisponibles</th><th>Score</th></tr></thead><tbody id="topDates"></tbody></table></div>
-  </section>
-  <section class="panel">
-    <div class="monthbar"><button id="prev" class="secondary">‹ Mois précédent</button><h2 id="monthTitle"></h2><button id="next" class="secondary">Mois suivant ›</button></div>
-    <div class="legend"><span><i class="dot g"></i>Disponible</span><span><i class="dot o"></i>À confirmer</span><span><i class="dot r"></i>Indisponible</span></div>
-    <div class="calendar" id="calendar"></div>
-  </section>
-  <section class="panel">
-    <h2>Liste des réponses</h2>
-    <div style="overflow:auto"><table class="records"><thead><tr><th>Date</th><th>Nom</th><th>Équipe</th><th>Statut</th><th>Commentaire</th><th></th></tr></thead><tbody id="records"></tbody></table></div>
-  </section>
+<section class="panel"><div class="controls"><div><label for="name">Votre nom *</label><input id="name" maxlength="80" placeholder="Prénom Nom"></div><div><label for="team">Équipe / groupe</label><input id="team" maxlength="80" placeholder="Optionnel"></div><div><label for="filterPerson">Filtrer les indisponibilités</label><select id="filterPerson"><option value="">Toutes les personnes</option></select></div><button id="saveProfile">Créer / mettre à jour mon profil</button></div><div id="connection" class="status"></div><p class="notice">Après création du profil, cliquez sur les dates où vous êtes indisponible. Cliquez de nouveau sur votre indisponibilité pour la modifier ou la supprimer.</p></section>
+<section class="panel summary"><div class="kpi"><strong id="kpiPeople">0</strong> profils enregistrés</div><div class="kpi"><strong id="kpiAvailable">0</strong> personnes disponibles sur la meilleure date</div><div class="kpi"><strong id="kpiRecords">0</strong> indisponibilités enregistrées</div></section>
+<section class="panel"><h2>Meilleures dates</h2><p class="notice">Classement par nombre de profils disponibles. Une personne sans indisponibilité enregistrée sur une date est comptée disponible.</p><div style="overflow:auto"><table class="records"><thead><tr><th>Rang</th><th>Date</th><th>Disponibles</th><th>Indisponibles</th><th>Taux de disponibilité</th></tr></thead><tbody id="topDates"></tbody></table></div></section>
+<section class="panel"><div class="monthbar"><button id="prev" class="secondary">‹ Mois précédent</button><h2 id="monthTitle"></h2><button id="next" class="secondary">Mois suivant ›</button></div><div class="calendar" id="calendar"></div></section>
+<section class="panel"><h2>Mes indisponibilités</h2><div style="overflow:auto"><table class="records"><thead><tr><th>Date</th><th>Commentaire</th><th></th></tr></thead><tbody id="myRecords"></tbody></table></div></section>
 </main>
-<dialog id="entryDialog"><form class="modal" id="entryForm">
-  <h3 id="dialogDate"></h3><input type="hidden" id="entryDate"><input type="hidden" id="entryId">
-  <label for="availability">Disponibilité *</label>
-  <select id="availability" required><option value="available">Disponible</option><option value="maybe">À confirmer</option><option value="unavailable">Indisponible</option></select>
-  <label for="comment" style="margin-top:12px">Commentaire</label><input id="comment" maxlength="200" placeholder="Optionnel">
-  <div class="modal-actions"><button type="button" class="secondary" id="cancelDialog">Annuler</button><button type="submit" id="saveEntry">Enregistrer</button></div>
-</form></dialog>
+<dialog id="entryDialog"><form class="modal" id="entryForm"><h3 id="dialogDate"></h3><input type="hidden" id="entryDate"><label for="comment">Commentaire</label><input id="comment" maxlength="200" placeholder="Optionnel"><div class="actions"><button type="button" class="secondary" id="cancelDialog">Annuler</button><button type="button" class="danger" id="deleteEntry" style="display:none">Je suis finalement disponible</button><button type="submit" id="saveEntry">Enregistrer mon indisponibilité</button></div></form></dialog>
 <script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
-  import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
-  import { getFirestore, collection, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, setDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-
-  const firebaseConfig={apiKey:"AIzaSyAzPBMPPYI01-BLs9rhNzyNoZNPE0WLDOY",authDomain:"desintagrationpit.firebaseapp.com",databaseURL:"https://desintagrationpit-default-rtdb.europe-west1.firebasedatabase.app",projectId:"desintagrationpit",storageBucket:"desintagrationpit.firebasestorage.app",messagingSenderId:"459188539470",appId:"1:459188539470:web:a2ec183f7743422096f31f"};
-  const START=new Date(2026,8,24),END=new Date(2026,11,31),$=id=>document.getElementById(id);
-  const escapeHtml=value=>String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  const fromIso=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
-  const labels={available:'Disponible',maybe:'À confirmer',unavailable:'Indisponible'};
-  let current=new Date(START.getFullYear(),START.getMonth(),1),entries=[],db,auth,user;
-
-  $('name').value=localStorage.getItem('availability_name')||'';$('team').value=localStorage.getItem('availability_team')||'';
-  $('saveProfile').onclick=()=>{if(!$('name').value.trim())return show('Merci de renseigner votre nom.',false);localStorage.setItem('availability_name',$('name').value.trim());localStorage.setItem('availability_team',$('team').value.trim());show('Profil enregistré sur cet appareil.',true)};
-  function show(msg,ok){$('connection').textContent=msg;$('connection').className=`status ${ok?'ok':'err'}`}
-  function myEntry(date){return entries.find(e=>e.date===date&&e.ownerUid===user?.uid)}
-  function uniqueEntries(data){const map=new Map();for(const e of data){const key=`${e.ownerUid||e.name}_${e.date}`;map.set(key,e)}return[...map.values()]}
-
-  function render(){
-    $('monthTitle').textContent=current.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});const cal=$('calendar');cal.innerHTML='';
-    ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(x=>cal.insertAdjacentHTML('beforeend',`<div class="dow">${x}</div>`));
-    const first=new Date(current.getFullYear(),current.getMonth(),1),offset=(first.getDay()+6)%7,gridStart=new Date(first);gridStart.setDate(first.getDate()-offset);
-    for(let i=0;i<42;i++){
-      const d=new Date(gridStart);d.setDate(gridStart.getDate()+i);const key=iso(d),inMonth=d.getMonth()===current.getMonth(),allowed=d>=START&&d<=END;
-      const filtered=uniqueEntries(entries.filter(e=>e.date===key&&(!$('filterPerson').value||e.name===$('filterPerson').value)));
-      const div=document.createElement('div');div.className=`day ${inMonth?'':'out'} ${allowed?'':'past'}`;
-      div.innerHTML=`<div class="date">${d.getDate()}</div><div class="entries">${filtered.map(e=>`<div class="entry ${escapeHtml(e.status)} ${e.ownerUid===user?.uid?'mine':''}" data-entry-id="${escapeHtml(e.id)}" title="${e.ownerUid===user?.uid?'Cliquer pour modifier':'Lecture seule'}">${escapeHtml(e.name)} · ${labels[e.status]||e.status}</div>`).join('')}</div>${allowed?`<button data-date="${key}">${myEntry(key)?'Modifier ma réponse':'Ajouter'}</button>`:''}`;cal.appendChild(div);
-    }
-    cal.querySelectorAll('button[data-date]').forEach(b=>b.onclick=()=>openEntry(b.dataset.date));
-    cal.querySelectorAll('.entry.mine').forEach(el=>el.onclick=()=>openExisting(el.dataset.entryId));renderRecords();renderKpis();renderTopDates();
-  }
-  function renderRecords(){const person=$('filterPerson').value;const data=uniqueEntries(entries.filter(e=>!person||e.name===person).filter(e=>{const d=fromIso(e.date);return d.getMonth()===current.getMonth()&&d.getFullYear()===current.getFullYear()}));
-    $('records').innerHTML=data.length?data.map(e=>`<tr><td>${fromIso(e.date).toLocaleDateString('fr-FR')}</td><td>${escapeHtml(e.name)}</td><td>${escapeHtml(e.team)}</td><td>${labels[e.status]||e.status}</td><td>${escapeHtml(e.comment)}</td><td>${e.ownerUid===user?.uid?`<button class="edit" data-edit="${e.id}">Modifier</button> <button class="danger" data-delete="${e.id}">Supprimer</button>`:''}</td></tr>`).join(''):'<tr><td colspan="6">Aucune réponse pour ce mois.</td></tr>';
-    $('records').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openExisting(b.dataset.edit));$('records').querySelectorAll('[data-delete]').forEach(b=>b.onclick=async()=>{if(confirm('Supprimer cette réponse ?'))await deleteDoc(doc(db,'availability',b.dataset.delete))});
-  }
-  function renderKpis(){const person=$('filterPerson').value,data=uniqueEntries(entries.filter(e=>!person||e.name===person));$('kpiPeople').textContent=new Set(data.map(e=>e.name)).size;$('kpiAvailable').textContent=data.filter(e=>e.status==='available').length;$('kpiRecords').textContent=data.length}
-  function renderTopDates(){
-    const person=$('filterPerson').value;
-    const data=uniqueEntries(entries.filter(e=>!person||e.name===person));
-    const stats=new Map();
-    for(const e of data){
-      if(!stats.has(e.date))stats.set(e.date,{available:0,maybe:0,unavailable:0,score:0});
-      const s=stats.get(e.date);
-      if(e.status==='available'){s.available++;s.score+=1}
-      else if(e.status==='maybe'){s.maybe++;s.score+=0.5}
-      else if(e.status==='unavailable'){s.unavailable++}
-    }
-    const ranked=[...stats.entries()]
-      .filter(([date])=>fromIso(date)>=START&&fromIso(date)<=END)
-      .sort((a,b)=>b[1].score-a[1].score||b[1].available-a[1].available||a[0].localeCompare(b[0]))
-      .slice(0,10);
-    $('topDates').innerHTML=ranked.length?ranked.map(([date,s],index)=>`<tr><td>${index+1}</td><td>${fromIso(date).toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'})}</td><td>${s.available}</td><td>${s.maybe}</td><td>${s.unavailable}</td><td><strong>${Number.isInteger(s.score)?s.score:s.score.toFixed(1)}</strong></td></tr>`).join(''):'<tr><td colspan="6">Aucune disponibilité enregistrée.</td></tr>';
-  }
-  function refreshPeople(){const selected=$('filterPerson').value,names=[...new Set(entries.map(e=>e.name))].sort((a,b)=>a.localeCompare(b,'fr'));$('filterPerson').innerHTML='<option value="">Toutes les personnes</option>'+names.map(n=>`<option>${escapeHtml(n)}</option>`).join('');$('filterPerson').value=names.includes(selected)?selected:''}
-  function prepareDialog(e,date){$('entryDate').value=date;$('entryId').value=e?.id||'';$('availability').value=e?.status||'available';$('comment').value=e?.comment||'';$('dialogDate').textContent=fromIso(date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});$('saveEntry').textContent=e?'Modifier':'Enregistrer';$('entryDialog').showModal()}
-  function openEntry(date){if(!user)return show('Connexion Firebase en cours. Réessayez.',false);if(!$('name').value.trim())return show('Renseignez votre nom avant d’ajouter une disponibilité.',false);prepareDialog(myEntry(date),date)}
-  function openExisting(id){const e=entries.find(x=>x.id===id);if(!e||e.ownerUid!==user?.uid)return;prepareDialog(e,e.date)}
-  $('cancelDialog').onclick=()=>$('entryDialog').close();
-  $('entryForm').onsubmit=async ev=>{ev.preventDefault();if(!user)return show('Utilisateur non connecté.',false);const date=$('entryDate').value;const existing=myEntry(date);const targetId=existing?.id||$('entryId').value||`${user.uid}_${date}`;const payload={date,name:$('name').value.trim(),team:$('team').value.trim(),status:$('availability').value,comment:$('comment').value.trim(),ownerUid:user.uid,updatedAt:serverTimestamp()};if(!existing)payload.createdAt=serverTimestamp();
-    try{await setDoc(doc(db,'availability',targetId),payload,{merge:true});const duplicates=entries.filter(e=>e.date===date&&e.ownerUid===user.uid&&e.id!==targetId);await Promise.all(duplicates.map(e=>deleteDoc(doc(db,'availability',e.id))));$('entryDialog').close();show(existing?'Disponibilité modifiée.':'Disponibilité enregistrée.',true)}catch(e){show(`Enregistrement impossible : ${e.message}`,false)}
-  };
-  $('prev').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()-1,1);if(current<new Date(START.getFullYear(),START.getMonth(),1))current=new Date(START.getFullYear(),START.getMonth(),1);render()};$('next').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()+1,1);if(current>new Date(END.getFullYear(),END.getMonth(),1))current=new Date(END.getFullYear(),END.getMonth(),1);render()};$('filterPerson').onchange=render;
-  async function init(){try{const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);const result=await signInAnonymously(auth);user=result.user;show('Connexion Firebase active.',true);onSnapshot(query(collection(db,'availability'),orderBy('date','asc')),snap=>{entries=snap.docs.map(x=>({id:x.id,...x.data()}));refreshPeople();render()},e=>show(`Lecture impossible : ${e.message}`,false))}catch(e){show(`Connexion impossible : ${e.message}`,false)}}
-  render();init();
-</script>
-</body>
-</html>
+import{initializeApp}from'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';import{getAuth,signInAnonymously}from'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';import{getFirestore,collection,deleteDoc,doc,onSnapshot,query,orderBy,serverTimestamp,setDoc}from'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+const firebaseConfig={apiKey:"AIzaSyAzPBMPPYI01-BLs9rhNzyNoZNPE0WLDOY",authDomain:"desintagrationpit.firebaseapp.com",databaseURL:"https://desintagrationpit-default-rtdb.europe-west1.firebasedatabase.app",projectId:"desintagrationpit",storageBucket:"desintagrationpit.firebasestorage.app",messagingSenderId:"459188539470",appId:"1:459188539470:web:a2ec183f7743422096f31f"};
+const START=new Date(2026,8,24),END=new Date(2026,11,31),$=id=>document.getElementById(id),iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,fromIso=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)},esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));let current=new Date(2026,8,1),profiles=[],entries=[],db,user;
+function show(m,ok){$('connection').textContent=m;$('connection').className=`status ${ok?'ok':'err'}`}function mine(date){return entries.find(e=>e.date===date&&e.ownerUid===user?.uid)}function allDates(){const a=[];for(let d=new Date(START);d<=END;d.setDate(d.getDate()+1))a.push(iso(d));return a}
+$('name').value=localStorage.getItem('availability_name')||'';$('team').value=localStorage.getItem('availability_team')||'';
+$('saveProfile').onclick=async()=>{if(!user)return show('Connexion en cours.',false);const name=$('name').value.trim();if(!name)return show('Renseignez votre nom.',false);try{await setDoc(doc(db,'profiles',user.uid),{name,team:$('team').value.trim(),ownerUid:user.uid,updatedAt:serverTimestamp()},{merge:true});localStorage.setItem('availability_name',name);localStorage.setItem('availability_team',$('team').value.trim());show('Profil enregistré. Vous êtes disponible par défaut sur toutes les dates.',true)}catch(e){show(`Profil non enregistré : ${e.message}`,false)}};
+function render(){renderCalendar();renderTopDates();renderMyRecords();$('kpiPeople').textContent=profiles.length;$('kpiRecords').textContent=entries.length;const best=bestDates()[0];$('kpiAvailable').textContent=best?best.available:profiles.length}
+function renderCalendar(){$('monthTitle').textContent=current.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});const cal=$('calendar');cal.innerHTML='';['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(x=>cal.insertAdjacentHTML('beforeend',`<div class="dow">${x}</div>`));const first=new Date(current.getFullYear(),current.getMonth(),1),offset=(first.getDay()+6)%7,start=new Date(first);start.setDate(first.getDate()-offset);for(let i=0;i<42;i++){const d=new Date(start);d.setDate(start.getDate()+i);const key=iso(d),allowed=d>=START&&d<=END,filtered=entries.filter(e=>e.date===key&&(!$('filterPerson').value||e.ownerUid===$('filterPerson').value)),unavailableOwners=new Set(entries.filter(e=>e.date===key).map(e=>e.ownerUid)),available=Math.max(0,profiles.length-unavailableOwners.size);const div=document.createElement('div');div.className=`day ${d.getMonth()===current.getMonth()?'':'out'} ${allowed?'':'closed'}`;div.innerHTML=`<div class="date">${d.getDate()}</div>${allowed?`<div class="count">${available}/${profiles.length} disponible(s)</div>${filtered.map(e=>`<div class="entry ${e.ownerUid===user?.uid?'mine':''}" data-id="${e.id}">${esc(e.name)}</div>`).join('')}<button data-date="${key}">${mine(key)?'Modifier mon indisponibilité':'Je suis indisponible'}</button>`:''}`;cal.appendChild(div)}cal.querySelectorAll('[data-date]').forEach(b=>b.onclick=()=>openDialog(b.dataset.date));cal.querySelectorAll('.entry.mine').forEach(e=>e.onclick=()=>openDialog(entries.find(x=>x.id===e.dataset.id).date))}
+function bestDates(){return allDates().map(date=>{const unavailable=new Set(entries.filter(e=>e.date===date).map(e=>e.ownerUid)).size,available=Math.max(0,profiles.length-unavailable);return{date,available,unavailable,rate:profiles.length?Math.round(available/profiles.length*100):0}}).sort((a,b)=>b.available-a.available||a.unavailable-b.unavailable||a.date.localeCompare(b.date))}
+function renderTopDates(){const data=bestDates().slice(0,10);$('topDates').innerHTML=profiles.length?data.map((x,i)=>`<tr><td>${i+1}</td><td>${fromIso(x.date).toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'})}</td><td><strong>${x.available}</strong></td><td>${x.unavailable}</td><td>${x.rate}%</td></tr>`).join(''):'<tr><td colspan="5">Créez au moins un profil pour calculer les meilleures dates.</td></tr>'}
+function renderMyRecords(){const data=entries.filter(e=>e.ownerUid===user?.uid).sort((a,b)=>a.date.localeCompare(b.date));$('myRecords').innerHTML=data.length?data.map(e=>`<tr><td>${fromIso(e.date).toLocaleDateString('fr-FR')}</td><td>${esc(e.comment)}</td><td><button data-edit="${e.date}">Modifier</button></td></tr>`).join(''):'<tr><td colspan="3">Aucune indisponibilité enregistrée.</td></tr>';$('myRecords').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openDialog(b.dataset.edit))}
+function refreshPeople(){const selected=$('filterPerson').value;$('filterPerson').innerHTML='<option value="">Toutes les personnes</option>'+profiles.slice().sort((a,b)=>a.name.localeCompare(b.name,'fr')).map(p=>`<option value="${esc(p.ownerUid)}">${esc(p.name)}</option>`).join('');$('filterPerson').value=profiles.some(p=>p.ownerUid===selected)?selected:''}
+function openDialog(date){if(!profiles.some(p=>p.ownerUid===user?.uid))return show('Créez d’abord votre profil.',false);const e=mine(date);$('entryDate').value=date;$('comment').value=e?.comment||'';$('dialogDate').textContent=`Indisponibilité du ${fromIso(date).toLocaleDateString('fr-FR')}`;$('deleteEntry').style.display=e?'block':'none';$('entryDialog').showModal()}
+$('entryForm').onsubmit=async ev=>{ev.preventDefault();const date=$('entryDate').value,profile=profiles.find(p=>p.ownerUid===user.uid);try{await setDoc(doc(db,'unavailability',`${user.uid}_${date}`),{date,name:profile.name,team:profile.team||'',comment:$('comment').value.trim(),ownerUid:user.uid,updatedAt:serverTimestamp()},{merge:true});$('entryDialog').close();show('Indisponibilité enregistrée.',true)}catch(e){show(`Enregistrement impossible : ${e.message}`,false)}};$('deleteEntry').onclick=async()=>{try{await deleteDoc(doc(db,'unavailability',`${user.uid}_${$('entryDate').value}`));$('entryDialog').close();show('Date remise en disponibilité.',true)}catch(e){show(`Suppression impossible : ${e.message}`,false)}};$('cancelDialog').onclick=()=>$('entryDialog').close();$('filterPerson').onchange=render;$('prev').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()-1,1);if(current<new Date(2026,8,1))current=new Date(2026,8,1);render()};$('next').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()+1,1);if(current>new Date(2026,11,1))current=new Date(2026,11,1);render()};
+async function init(){try{const app=initializeApp(firebaseConfig);db=getFirestore(app);user=(await signInAnonymously(getAuth(app))).user;show('Connexion Firebase active.',true);onSnapshot(query(collection(db,'profiles'),orderBy('name','asc')),s=>{profiles=s.docs.map(x=>({id:x.id,...x.data()}));const me=profiles.find(p=>p.ownerUid===user.uid);if(me){$('name').value=me.name;$('team').value=me.team||''}refreshPeople();render()},e=>show(`Lecture des profils impossible : ${e.message}`,false));onSnapshot(query(collection(db,'unavailability'),orderBy('date','asc')),s=>{entries=s.docs.map(x=>({id:x.id,...x.data()}));render()},e=>show(`Lecture des indisponibilités impossible : ${e.message}`,false))}catch(e){show(`Connexion impossible : ${e.message}`,false)}}init();
+</script></body></html>
