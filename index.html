@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>Disponibilités 2026</title>
+  <title>Désintégration PIT Archi</title>
   <style>
     :root{--blue:#0b5cab;--blue2:#eaf3fb;--green:#18864b;--red:#c43d3d;--orange:#c77700;--line:#d9e1ea;--bg:#f5f7fa}
     *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#142033}
@@ -24,7 +24,7 @@
   </style>
 </head>
 <body>
-<header><div class="wrap"><h1>Calendrier des disponibilités</h1><p class="subtitle">Saisissez et consultez les disponibilités jusqu'au 31 décembre 2026.</p></div></header>
+<header><div class="wrap"><h1>Désintégration PIT Archi</h1><p class="subtitle">Suivi collaboratif des disponibilités jusqu'au 31 décembre 2026.</p></div></header>
 <main class="wrap">
   <section class="panel">
     <div class="controls">
@@ -40,6 +40,11 @@
     <div class="kpi"><strong id="kpiPeople">0</strong> personnes visibles</div>
     <div class="kpi"><strong id="kpiAvailable">0</strong> disponibilités</div>
     <div class="kpi"><strong id="kpiRecords">0</strong> réponses au total</div>
+  </section>
+  <section class="panel">
+    <h2>Meilleures dates de disponibilité</h2>
+    <p class="notice">Classement calculé avec 1 point pour « Disponible », 0,5 point pour « À confirmer » et 0 point pour « Indisponible ».</p>
+    <div style="overflow:auto"><table class="records"><thead><tr><th>Rang</th><th>Date</th><th>Disponibles</th><th>À confirmer</th><th>Indisponibles</th><th>Score</th></tr></thead><tbody id="topDates"></tbody></table></div>
   </section>
   <section class="panel">
     <div class="monthbar"><button id="prev" class="secondary">‹ Mois précédent</button><h2 id="monthTitle"></h2><button id="next" class="secondary">Mois suivant ›</button></div>
@@ -88,13 +93,30 @@
       div.innerHTML=`<div class="date">${d.getDate()}</div><div class="entries">${filtered.map(e=>`<div class="entry ${escapeHtml(e.status)} ${e.ownerUid===user?.uid?'mine':''}" data-entry-id="${escapeHtml(e.id)}" title="${e.ownerUid===user?.uid?'Cliquer pour modifier':'Lecture seule'}">${escapeHtml(e.name)} · ${labels[e.status]||e.status}</div>`).join('')}</div>${allowed?`<button data-date="${key}">${myEntry(key)?'Modifier ma réponse':'Ajouter'}</button>`:''}`;cal.appendChild(div);
     }
     cal.querySelectorAll('button[data-date]').forEach(b=>b.onclick=()=>openEntry(b.dataset.date));
-    cal.querySelectorAll('.entry.mine').forEach(el=>el.onclick=()=>openExisting(el.dataset.entryId));renderRecords();renderKpis();
+    cal.querySelectorAll('.entry.mine').forEach(el=>el.onclick=()=>openExisting(el.dataset.entryId));renderRecords();renderKpis();renderTopDates();
   }
   function renderRecords(){const person=$('filterPerson').value;const data=uniqueEntries(entries.filter(e=>!person||e.name===person).filter(e=>{const d=fromIso(e.date);return d.getMonth()===current.getMonth()&&d.getFullYear()===current.getFullYear()}));
     $('records').innerHTML=data.length?data.map(e=>`<tr><td>${fromIso(e.date).toLocaleDateString('fr-FR')}</td><td>${escapeHtml(e.name)}</td><td>${escapeHtml(e.team)}</td><td>${labels[e.status]||e.status}</td><td>${escapeHtml(e.comment)}</td><td>${e.ownerUid===user?.uid?`<button class="edit" data-edit="${e.id}">Modifier</button> <button class="danger" data-delete="${e.id}">Supprimer</button>`:''}</td></tr>`).join(''):'<tr><td colspan="6">Aucune réponse pour ce mois.</td></tr>';
     $('records').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openExisting(b.dataset.edit));$('records').querySelectorAll('[data-delete]').forEach(b=>b.onclick=async()=>{if(confirm('Supprimer cette réponse ?'))await deleteDoc(doc(db,'availability',b.dataset.delete))});
   }
   function renderKpis(){const person=$('filterPerson').value,data=uniqueEntries(entries.filter(e=>!person||e.name===person));$('kpiPeople').textContent=new Set(data.map(e=>e.name)).size;$('kpiAvailable').textContent=data.filter(e=>e.status==='available').length;$('kpiRecords').textContent=data.length}
+  function renderTopDates(){
+    const person=$('filterPerson').value;
+    const data=uniqueEntries(entries.filter(e=>!person||e.name===person));
+    const stats=new Map();
+    for(const e of data){
+      if(!stats.has(e.date))stats.set(e.date,{available:0,maybe:0,unavailable:0,score:0});
+      const s=stats.get(e.date);
+      if(e.status==='available'){s.available++;s.score+=1}
+      else if(e.status==='maybe'){s.maybe++;s.score+=0.5}
+      else if(e.status==='unavailable'){s.unavailable++}
+    }
+    const ranked=[...stats.entries()]
+      .filter(([date])=>fromIso(date)>=START&&fromIso(date)<=END)
+      .sort((a,b)=>b[1].score-a[1].score||b[1].available-a[1].available||a[0].localeCompare(b[0]))
+      .slice(0,10);
+    $('topDates').innerHTML=ranked.length?ranked.map(([date,s],index)=>`<tr><td>${index+1}</td><td>${fromIso(date).toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'})}</td><td>${s.available}</td><td>${s.maybe}</td><td>${s.unavailable}</td><td><strong>${Number.isInteger(s.score)?s.score:s.score.toFixed(1)}</strong></td></tr>`).join(''):'<tr><td colspan="6">Aucune disponibilité enregistrée.</td></tr>';
+  }
   function refreshPeople(){const selected=$('filterPerson').value,names=[...new Set(entries.map(e=>e.name))].sort((a,b)=>a.localeCompare(b,'fr'));$('filterPerson').innerHTML='<option value="">Toutes les personnes</option>'+names.map(n=>`<option>${escapeHtml(n)}</option>`).join('');$('filterPerson').value=names.includes(selected)?selected:''}
   function prepareDialog(e,date){$('entryDate').value=date;$('entryId').value=e?.id||'';$('availability').value=e?.status||'available';$('comment').value=e?.comment||'';$('dialogDate').textContent=fromIso(date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});$('saveEntry').textContent=e?'Modifier':'Enregistrer';$('entryDialog').showModal()}
   function openEntry(date){if(!user)return show('Connexion Firebase en cours. Réessayez.',false);if(!$('name').value.trim())return show('Renseignez votre nom avant d’ajouter une disponibilité.',false);prepareDialog(myEntry(date),date)}
