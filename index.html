@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Disponibilités 2026</title>
+  <style>
+    :root{--blue:#0b5cab;--blue2:#eaf3fb;--green:#18864b;--red:#c43d3d;--orange:#c77700;--grey:#667085;--line:#d9e1ea;--bg:#f5f7fa;--white:#fff}
+    *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#142033}
+    header{background:linear-gradient(135deg,#063b70,#0b6dbf);color:white;padding:24px 18px}.wrap{max-width:1180px;margin:auto}.subtitle{opacity:.88;margin:6px 0 0}
+    main{padding:18px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 3px 12px #19324d10}
+    .controls{display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:10px;align-items:end}label{font-size:.86rem;font-weight:700;color:#344054;display:block;margin-bottom:6px}
+    input,select,button{width:100%;min-height:42px;border-radius:9px;border:1px solid #bfcbd8;padding:9px 11px;font:inherit}button{border:0;background:var(--blue);color:white;font-weight:700;cursor:pointer}button:hover{filter:brightness(.94)}button.secondary{background:#e7edf4;color:#1f3650}
+    .notice{font-size:.88rem;color:#475467;margin-top:10px}.status{padding:8px 11px;border-radius:8px;margin-top:10px;display:none}.status.ok{display:block;background:#e9f8ef;color:#146b3b}.status.err{display:block;background:#fdecec;color:#9d2525}
+    .monthbar{display:flex;align-items:center;justify-content:space-between;gap:12px}.monthbar button{width:auto}.monthbar h2{margin:0;font-size:1.3rem}
+    .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.84rem;color:#475467;margin:12px 0}.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}.g{background:var(--green)}.o{background:var(--orange)}.r{background:var(--red)}
+    .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.dow{text-align:center;font-weight:700;color:#667085;padding:7px}.day{min-height:138px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;overflow:hidden}.day.out{opacity:.42;background:#f4f6f8}.day.past{background:#f2f3f5}.date{font-weight:800;margin-bottom:6px}.entries{display:flex;flex-direction:column;gap:4px}.entry{font-size:.76rem;padding:5px 6px;border-radius:6px;background:#eef3f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry.available{border-left:4px solid var(--green)}.entry.maybe{border-left:4px solid var(--orange)}.entry.unavailable{border-left:4px solid var(--red)}
+    .day button{margin-top:7px;min-height:30px;padding:5px;font-size:.78rem}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.kpi{border-radius:10px;padding:13px;background:var(--blue2)}.kpi strong{font-size:1.5rem;display:block}
+    dialog{border:0;border-radius:14px;padding:0;max-width:500px;width:calc(100% - 28px);box-shadow:0 18px 55px #0004}dialog::backdrop{background:#07192f99}.modal{padding:20px}.modal h3{margin-top:0}.modal-actions{display:flex;gap:8px;margin-top:14px}.modal-actions button{flex:1}
+    .records{width:100%;border-collapse:collapse;font-size:.9rem}.records th,.records td{padding:9px;border-bottom:1px solid var(--line);text-align:left}.records th{background:#f7f9fb}.danger{background:#b42318}
+    @media(max-width:800px){.controls{grid-template-columns:1fr 1fr}.calendar{grid-template-columns:repeat(2,1fr)}.dow{display:none}.summary{grid-template-columns:1fr}.day{min-height:115px}}
+    @media(max-width:480px){.controls,.calendar{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><div class="wrap"><h1>Calendrier des disponibilités</h1><p class="subtitle">Saisissez et consultez les disponibilités jusqu'au 31 décembre 2026.</p></div></header>
+<main class="wrap">
+  <section class="panel">
+    <div class="controls">
+      <div><label for="name">Votre nom *</label><input id="name" maxlength="80" placeholder="Prénom Nom" autocomplete="name"></div>
+      <div><label for="team">Équipe / groupe</label><input id="team" maxlength="80" placeholder="Optionnel"></div>
+      <div><label for="filterPerson">Filtrer par personne</label><select id="filterPerson"><option value="">Toutes les personnes</option></select></div>
+      <button id="saveProfile">Enregistrer mon profil</button>
+    </div>
+    <div id="connection" class="status"></div>
+    <p class="notice">Les données sont partagées avec tous les utilisateurs autorisés de cette application. Ne saisissez aucune donnée sensible.</p>
+  </section>
+
+  <section class="panel summary">
+    <div class="kpi"><strong id="kpiPeople">0</strong> personnes visibles</div>
+    <div class="kpi"><strong id="kpiAvailable">0</strong> disponibilités</div>
+    <div class="kpi"><strong id="kpiRecords">0</strong> réponses au total</div>
+  </section>
+
+  <section class="panel">
+    <div class="monthbar"><button id="prev" class="secondary">‹ Mois précédent</button><h2 id="monthTitle"></h2><button id="next" class="secondary">Mois suivant ›</button></div>
+    <div class="legend"><span><i class="dot g"></i>Disponible</span><span><i class="dot o"></i>À confirmer</span><span><i class="dot r"></i>Indisponible</span></div>
+    <div class="calendar" id="calendar"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Liste des réponses</h2>
+    <div style="overflow:auto"><table class="records"><thead><tr><th>Date</th><th>Nom</th><th>Équipe</th><th>Statut</th><th>Commentaire</th><th></th></tr></thead><tbody id="records"></tbody></table></div>
+  </section>
+</main>
+
+<dialog id="entryDialog"><form method="dialog" class="modal" id="entryForm">
+  <h3 id="dialogDate"></h3>
+  <input type="hidden" id="entryDate">
+  <label for="availability">Disponibilité *</label>
+  <select id="availability" required><option value="available">Disponible</option><option value="maybe">À confirmer</option><option value="unavailable">Indisponible</option></select>
+  <label for="comment" style="margin-top:12px">Commentaire</label>
+  <input id="comment" maxlength="200" placeholder="Optionnel">
+  <div class="modal-actions"><button type="button" class="secondary" id="cancelDialog">Annuler</button><button value="default" id="saveEntry">Enregistrer</button></div>
+</form></dialog>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
+  import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+  import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+
+  // Remplacez ces valeurs par la configuration de votre application Web Firebase.
+  const firebaseConfig = {
+    apiKey: 'YOUR_API_KEY',
+    authDomain: 'YOUR_PROJECT.firebaseapp.com',
+    projectId: 'YOUR_PROJECT_ID',
+    storageBucket: 'YOUR_PROJECT.firebasestorage.app',
+    messagingSenderId: 'YOUR_SENDER_ID',
+    appId: 'YOUR_APP_ID'
+  };
+
+  const START = new Date(2026, 8, 24); // Date de départ du prototype
+  const END = new Date(2026, 11, 31);
+  const $ = id => document.getElementById(id);
+  const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const fromIso = s => { const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); };
+  const labels = {available:'Disponible',maybe:'À confirmer',unavailable:'Indisponible'};
+  let current = new Date(START.getFullYear(), START.getMonth(), 1), entries = [], db, auth, user;
+
+  $('name').value = localStorage.getItem('availability_name') || '';
+  $('team').value = localStorage.getItem('availability_team') || '';
+  $('saveProfile').onclick = () => {
+    if (!$('name').value.trim()) return show('Merci de renseigner votre nom.', false);
+    localStorage.setItem('availability_name', $('name').value.trim());
+    localStorage.setItem('availability_team', $('team').value.trim());
+    show('Profil enregistré sur cet appareil.', true);
+  };
+  function show(msg, ok){ $('connection').textContent=msg; $('connection').className=`status ${ok?'ok':'err'}`; }
+
+  function render(){
+    $('monthTitle').textContent = current.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+    const cal=$('calendar'); cal.innerHTML='';
+    ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(x=>cal.insertAdjacentHTML('beforeend',`<div class="dow">${x}</div>`));
+    const first=new Date(current.getFullYear(),current.getMonth(),1); const offset=(first.getDay()+6)%7;
+    const gridStart=new Date(first); gridStart.setDate(first.getDate()-offset);
+    for(let i=0;i<42;i++){
+      const d=new Date(gridStart); d.setDate(gridStart.getDate()+i); const key=iso(d);
+      const inMonth=d.getMonth()===current.getMonth(), allowed=d>=START&&d<=END;
+      const filtered=entries.filter(e=>e.date===key&&(!$('filterPerson').value||e.name===$('filterPerson').value));
+      const div=document.createElement('div'); div.className=`day ${inMonth?'':'out'} ${allowed?'':'past'}`;
+      div.innerHTML=`<div class="date">${d.getDate()}</div><div class="entries">${filtered.map(e=>`<div class="entry ${escapeHtml(e.status)}" title="${escapeHtml(e.comment)}">${escapeHtml(e.name)} · ${labels[e.status]||e.status}</div>`).join('')}</div>${allowed?`<button data-date="${key}">Ajouter</button>`:''}`;
+      cal.appendChild(div);
+    }
+    cal.querySelectorAll('button[data-date]').forEach(b=>b.onclick=()=>openEntry(b.dataset.date));
+    renderRecords(); renderKpis();
+  }
+  function renderRecords(){
+    const person=$('filterPerson').value;
+    const data=entries.filter(e=>!person||e.name===person).filter(e=>{const d=fromIso(e.date);return d.getMonth()===current.getMonth()&&d.getFullYear()===current.getFullYear();});
+    $('records').innerHTML=data.length?data.map(e=>`<tr><td>${fromIso(e.date).toLocaleDateString('fr-FR')}</td><td>${escapeHtml(e.name)}</td><td>${escapeHtml(e.team)}</td><td>${labels[e.status]||e.status}</td><td>${escapeHtml(e.comment)}</td><td>${e.ownerUid===user?.uid?`<button class="danger" data-delete="${e.id}">Supprimer</button>`:''}</td></tr>`).join(''):'<tr><td colspan="6">Aucune réponse pour ce mois.</td></tr>';
+    $('records').querySelectorAll('[data-delete]').forEach(b=>b.onclick=async()=>{if(confirm('Supprimer cette réponse ?')) await deleteDoc(doc(db,'availability',b.dataset.delete));});
+  }
+  function renderKpis(){
+    const person=$('filterPerson').value; const data=entries.filter(e=>!person||e.name===person);
+    $('kpiPeople').textContent=new Set(data.map(e=>e.name)).size; $('kpiAvailable').textContent=data.filter(e=>e.status==='available').length; $('kpiRecords').textContent=data.length;
+  }
+  function refreshPeople(){
+    const selected=$('filterPerson').value; const names=[...new Set(entries.map(e=>e.name))].sort((a,b)=>a.localeCompare(b,'fr'));
+    $('filterPerson').innerHTML='<option value="">Toutes les personnes</option>'+names.map(n=>`<option>${escapeHtml(n)}</option>`).join(''); $('filterPerson').value=names.includes(selected)?selected:'';
+  }
+  function openEntry(date){
+    if(!$('name').value.trim()) return show('Renseignez votre nom avant d’ajouter une disponibilité.',false);
+    $('entryDate').value=date; $('dialogDate').textContent=fromIso(date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); $('comment').value=''; $('entryDialog').showModal();
+  }
+  $('cancelDialog').onclick=()=>$('entryDialog').close();
+  $('entryForm').onsubmit=async ev=>{
+    ev.preventDefault();
+    try{await addDoc(collection(db,'availability'),{date:$('entryDate').value,name:$('name').value.trim(),team:$('team').value.trim(),status:$('availability').value,comment:$('comment').value.trim(),ownerUid:user.uid,createdAt:serverTimestamp()}); $('entryDialog').close(); show('Disponibilité enregistrée.',true);}catch(e){show(`Enregistrement impossible : ${e.message}`,false);}
+  };
+  $('prev').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()-1,1);if(current<new Date(START.getFullYear(),START.getMonth(),1))current=new Date(START.getFullYear(),START.getMonth(),1);render();};
+  $('next').onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()+1,1);if(current>new Date(END.getFullYear(),END.getMonth(),1))current=new Date(END.getFullYear(),END.getMonth(),1);render();};
+  $('filterPerson').onchange=render;
+
+  async function init(){
+    if(firebaseConfig.apiKey.startsWith('YOUR_')) return show('Configuration Firebase manquante. Consultez le README.',false);
+    try{const app=initializeApp(firebaseConfig); auth=getAuth(app); db=getFirestore(app); const result=await signInAnonymously(auth); user=result.user; show('Connexion Firebase active.',true);
+      onSnapshot(query(collection(db,'availability'),orderBy('date','asc')),snap=>{entries=snap.docs.map(x=>({id:x.id,...x.data()}));refreshPeople();render();},e=>show(`Lecture impossible : ${e.message}`,false));
+    }catch(e){show(`Connexion impossible : ${e.message}`,false);}
+  }
+  render(); init();
+</script>
+</body>
+</html>
